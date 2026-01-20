@@ -31,18 +31,27 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     ScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get('DATABASE_HOST'),
-        port: config.get('DATABASE_PORT'),
-        username: config.get('DATABASE_USER'),
-        password: config.get('DATABASE_PASSWORD'),
-        database: config.get('DATABASE_NAME'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false, // Disabled for faster startup
-        logging: config.get('NODE_ENV') === 'development',
-        ssl: config.get('DATABASE_SSL') === 'true' ? { rejectUnauthorized: false } : false,
-      }),
+      useFactory: (config: ConfigService) => {
+        const url = config.get<string>('DATABASE_URL');
+        const isProduction = config.get('NODE_ENV') === 'production';
+
+        return {
+          type: 'postgres',
+          ...(url ? { url } : {
+            host: config.get('DATABASE_HOST'),
+            port: config.get<number>('DATABASE_PORT'),
+            username: config.get('DATABASE_USER'),
+            password: config.get('DATABASE_PASSWORD'),
+            database: config.get('DATABASE_NAME'),
+          }),
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          synchronize: false, // Security: Disabled in NestJS for better control
+          logging: config.get('NODE_ENV') === 'development',
+          ssl: url || config.get('DATABASE_SSL') === 'true'
+            ? { rejectUnauthorized: false }
+            : false,
+        };
+      },
     }),
     ThrottlerModule.forRoot([{
       ttl: 60000,

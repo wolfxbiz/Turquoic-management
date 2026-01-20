@@ -12,11 +12,12 @@ async function setupDatabase() {
     console.log('');
 
     const client = new Client({
-        host: process.env.DATABASE_HOST,
-        port: parseInt(process.env.DATABASE_PORT || '5432'),
-        user: process.env.DATABASE_USER,
-        password: process.env.DATABASE_PASSWORD,
-        database: process.env.DATABASE_NAME,
+        connectionString: process.env.DATABASE_URL,
+        host: !process.env.DATABASE_URL ? process.env.DATABASE_HOST : undefined,
+        port: !process.env.DATABASE_URL ? parseInt(process.env.DATABASE_PORT || '5432') : undefined,
+        user: !process.env.DATABASE_URL ? process.env.DATABASE_USER : undefined,
+        password: !process.env.DATABASE_URL ? process.env.DATABASE_PASSWORD : undefined,
+        database: !process.env.DATABASE_URL ? process.env.DATABASE_NAME : undefined,
         ssl: { rejectUnauthorized: false },
     });
 
