@@ -38,6 +38,12 @@ export class TeamsService {
         return this.teamsRepository.save(team);
     }
 
+    async update(id: string, tenantId: string, updates: Partial<Team>): Promise<Team> {
+        const team = await this.findOne(id, tenantId);
+        Object.assign(team, updates);
+        return this.teamsRepository.save(team);
+    }
+
     async addMember(teamId: string, userId: string, tenantId: string): Promise<void> {
         const team = await this.findOne(teamId, tenantId);
         const user = await this.usersRepository.findOne({ where: { id: userId, tenantId } });

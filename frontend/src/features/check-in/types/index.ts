@@ -2,10 +2,12 @@ export type WorkStatus = 'in_office' | 'remote' | 'on_leave';
 
 export interface CheckInFormData {
     status: WorkStatus;
-    projectId: string;
-    intent: string;
+    projectId?: string;
+    intent?: string;
     isBlocked: boolean;
-    blockReason?: string;
+    blockReasonCategory?: string;
+    blockReasonText?: string;
+    helperUserId?: string;
 }
 
 export interface ProjectOption {
@@ -16,10 +18,12 @@ export interface ProjectOption {
 export interface CheckInResponse {
     id: string;
     status: WorkStatus;
-    projectId: string;
-    intent: string;
+    projectId: string | null;
+    intent: string | null;
     isBlocked: boolean;
-    blockReason?: string;
+    blockReasonCategory: string | null;
+    blockReasonText: string | null;
+    helperUserId: string | null;
     checkInDate: string;
     checkedInAt?: string;
     checkedOutAt?: string;

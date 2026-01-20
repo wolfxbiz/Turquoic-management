@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Req, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Req, Delete, Patch } from '@nestjs/common';
 import { TeamsService } from './teams.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { AdminGuard } from '../../common/guards/admin.guard';
@@ -22,6 +22,12 @@ export class TeamsController {
     @UseGuards(AdminGuard)
     create(@Req() req: any, @Body('name') name: string, @Body('description') description?: string) {
         return this.teamsService.create(req.user.tenantId, name, description);
+    }
+
+    @Patch(':id')
+    @UseGuards(AdminGuard)
+    update(@Param('id') id: string, @Req() req: any, @Body() body: any) {
+        return this.teamsService.update(id, req.user.tenantId, body);
     }
 
     @Post(':id/members/:userId')

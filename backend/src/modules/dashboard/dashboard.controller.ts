@@ -33,7 +33,10 @@ export class DashboardController {
                 status: c.status,
                 intent: c.intent,
                 isBlocked: c.isBlocked,
-                blockReason: c.blockReason,
+                blockReason: c.blockReasonText, // Compat
+                blockReasonText: c.blockReasonText,
+                blockReasonCategory: c.blockReasonCategory,
+                helperUserId: c.helperUserId, // Optional, mostly hidden by FE
             })),
         };
     }
@@ -45,7 +48,9 @@ export class DashboardController {
             id: c.id,
             userName: c.user?.fullName,
             projectName: c.project?.name,
-            blockReason: c.blockReason,
+            blockReason: c.blockReasonText,
+            blockReasonText: c.blockReasonText,
+            blockReasonCategory: c.blockReasonCategory,
             intent: c.intent,
         }));
     }

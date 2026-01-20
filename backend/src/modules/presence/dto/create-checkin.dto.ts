@@ -1,4 +1,4 @@
-import { IsEnum, IsUUID, IsString, MaxLength, IsBoolean, IsOptional } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsEnum, MaxLength, IsUUID } from 'class-validator';
 
 export enum WorkStatus {
     IN_OFFICE = 'in_office',
@@ -10,23 +10,28 @@ export class CreateCheckInDto {
     @IsEnum(WorkStatus)
     status: WorkStatus;
 
-    @IsString()
+    // Nullable if on_leave
     @IsOptional()
-    location?: string;
-
     @IsUUID()
-
-    @IsOptional()
     projectId?: string;
 
-    @IsString()
+    // Nullable if on_leave
+    @IsOptional()
     @MaxLength(120)
-    intent: string;
+    intent?: string;
 
     @IsBoolean()
     isBlocked: boolean;
 
     @IsOptional()
     @IsString()
-    blockReason?: string;
+    blockReasonCategory?: string;
+
+    @IsOptional()
+    @MaxLength(120)
+    blockReasonText?: string;
+
+    @IsOptional()
+    @IsUUID()
+    helperUserId?: string;
 }

@@ -22,8 +22,9 @@ import { ProjectTasks } from './ProjectTasks';
 
 export const ProjectsList: React.FC = () => {
     const { user } = useAuthStore();
-    const { projects, isLoading, archiveProject, createProject } = useProjects();
+    const { projects, isLoading, archiveProject, createProject, updateProject } = useProjects();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editingProject, setEditingProject] = useState<any>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -53,11 +54,27 @@ export const ProjectsList: React.FC = () => {
         }
     };
 
+    const handleEditClick = (project: any) => {
+        setEditingProject(project);
+        setIsModalOpen(true);
+    };
+
+    const handleCreateClick = () => {
+        setEditingProject(null);
+        setIsModalOpen(true);
+    };
+
     const handleSaveProject = async (projectData: any) => {
         try {
-            await createProject(projectData);
-            toast.success('Project created successfully! ✅');
+            if (editingProject) {
+                await updateProject({ id: editingProject.id, updates: projectData });
+                toast.success('Project updated successfully! ✅');
+            } else {
+                await createProject(projectData);
+                toast.success('Project created successfully! ✅');
+            }
             setIsModalOpen(false);
+            setEditingProject(null);
         } catch (error: any) {
             console.error('Project creation failed:', error);
             const message = error.response?.data?.message || error.message || 'Failed to create project';
@@ -92,7 +109,7 @@ export const ProjectsList: React.FC = () => {
                 </div>
 
                 <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={handleCreateClick}
                     className="flex items-center justify-center gap-3 px-8 py-4 bg-turquoic-500 text-white font-black rounded-2xl shadow-xl shadow-turquoic-100 hover:bg-turquoic-600 active:scale-95 transition-all uppercase tracking-widest text-xs"
                 >
                     <Plus className="w-5 h-5" />
@@ -181,6 +198,16 @@ export const ProjectsList: React.FC = () => {
                                                 </td>
                                                 <td className="px-8 py-6 text-right" onClick={(e) => e.stopPropagation()}>
                                                     <div className="flex items-center justify-end gap-2">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleEditClick(project);
+                                                            }}
+                                                            className="bg-white p-2.5 text-gray-400 hover:text-turquoic-600 hover:bg-turquoic-50 hover:border-turquoic-100 border border-gray-100 rounded-xl transition-all shadow-sm active:scale-90"
+                                                            title="Edit Project"
+                                                        >
+                                                            <FolderKanban className="w-5 h-5" />
+                                                        </button>
                                                         {project.status === 'active' && (
                                                             <button
                                                                 onClick={() => handleArchive(project.id, project.name)}
@@ -249,7 +276,11 @@ export const ProjectsList: React.FC = () => {
             {/* Modals */}
             {isModalOpen && (
                 <CreateProjectModal
-                    onClose={() => setIsModalOpen(false)}
+                    project={editingProject}
+                    onClose={() => {
+                        setIsModalOpen(false);
+                        setEditingProject(null);
+                    }}
                     onSave={handleSaveProject}
                 />
             )}

@@ -38,6 +38,15 @@ export class ProjectsController {
         return this.projectsService.getProjectById(id);
     }
 
+    @Patch(':id')
+    updateProject(
+        @Param('id') id: string,
+        @CurrentUser() user: CurrentUserDto,
+        @Body() updates: any,
+    ) {
+        return this.projectsService.updateProject(id, user.tenantId, updates, user.isAdmin);
+    }
+
     @Get(':id/contributors')
     getContributors(
         @Param('id') id: string,

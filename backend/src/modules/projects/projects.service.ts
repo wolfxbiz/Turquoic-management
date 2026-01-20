@@ -146,6 +146,13 @@ export class ProjectsService {
         return project;
     }
 
+    async findOne(id: string, tenantId: string): Promise<Project | null> {
+        return this.projectRepository.findOne({
+            where: { id, tenantId },
+            relations: ['owner'],
+        });
+    }
+
     async archiveProject(id: string, isAdmin: boolean): Promise<Project> {
         if (!isAdmin) {
             throw new ForbiddenException('Only admins can archive projects');
@@ -178,5 +185,18 @@ export class ProjectsService {
         } finally {
             await queryRunner.release();
         }
+    }
+    async updateProject(id: string, tenantId: string, updates: Partial<Project>, isAdmin: boolean): Promise<Project> {
+        if (!isAdmin) {
+            throw new ForbiddenException('Only admins can update projects');
+        }
+
+        const project = await this.findOne(id, tenantId);
+        if (!project) {
+            throw new NotFoundException('Project not found');
+        }
+
+        Object.assign(project, updates);
+        return this.projectRepository.save(project);
     }
 }

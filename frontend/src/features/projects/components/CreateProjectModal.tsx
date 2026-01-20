@@ -5,20 +5,23 @@ import { CreateProjectDTO } from '../types';
 import { projectsService } from '../api/projectsService';
 import { useQuery } from '@tanstack/react-query';
 
+import { ProjectWithOwner } from '../types';
+
 interface CreateProjectModalProps {
     onClose: () => void;
     onSave: (project: CreateProjectDTO) => void;
+    project?: ProjectWithOwner | null;
 }
 
-export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose, onSave }) => {
+export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose, onSave, project }) => {
     const { data: users = [], isLoading: isLoadingUsers } = useQuery({
         queryKey: ['users'],
         queryFn: projectsService.getUsers,
     });
 
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [ownerId, setOwnerId] = useState('');
+    const [name, setName] = useState(project?.name || '');
+    const [description, setDescription] = useState(project?.description || '');
+    const [ownerId, setOwnerId] = useState(project?.ownerId || project?.owner?.id || '');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -67,7 +70,9 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose,
                             <ShieldCheck className="w-4 h-4 text-turquoic-600" />
                             <span className="text-[10px] font-black text-turquoic-600 uppercase tracking-widest">Administrative Action</span>
                         </div>
-                        <h2 className="text-3xl font-black text-gray-900 tracking-tight">Create Project</h2>
+                        <h2 className="text-3xl font-black text-gray-900 tracking-tight">
+                            {project ? 'Edit Project' : 'Create Project'}
+                        </h2>
                     </div>
                     <button
                         onClick={onClose}
@@ -164,7 +169,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ onClose,
                                 </>
                             ) : (
                                 <>
-                                    Deploy Project
+                                    {project ? 'Update Project' : 'Deploy Project'}
                                     <ChevronRight className="w-4 h-4" />
                                 </>
                             )}

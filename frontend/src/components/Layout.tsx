@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../features/auth/authStore';
+import { NotificationBell } from '../features/notifications/components/NotificationBell';
 
 interface LayoutProps {
     children: React.ReactNode;
@@ -150,6 +151,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Mobile Header & Content */}
             <div className="flex-1 flex flex-col min-w-0">
+                {/* Desktop Header */}
+                <header className="hidden lg:flex h-16 bg-white border-b border-gray-200 items-center justify-between px-10 sticky top-0 z-40 shadow-sm">
+                    <h1 className="text-lg font-bold text-gray-800 uppercase tracking-wide">
+                        {
+                            navItems.find(item => item.path === location.pathname)?.label || 'Dashboard'
+                        }
+                    </h1>
+                    <NotificationBell />
+                </header>
+
                 {/* Mobile Header */}
                 <header className="lg:hidden h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 sticky top-0 z-[60] shadow-sm">
                     <div className="flex items-center gap-3">
@@ -159,12 +170,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                             className="h-8 w-auto object-contain"
                         />
                     </div>
-                    <button
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className="p-2.5 bg-gray-50 rounded-xl text-gray-600 active:scale-90 transition-all border border-gray-100"
-                    >
-                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <NotificationBell />
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            className="p-2.5 bg-gray-50 rounded-xl text-gray-600 active:scale-90 transition-all border border-gray-100"
+                        >
+                            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
+                    </div>
                 </header>
 
                 {/* Page Content */}

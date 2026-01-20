@@ -18,6 +18,11 @@ export const projectsService = {
         return data;
     },
 
+    updateProject: async (id: string, updates: Partial<CreateProjectDTO>): Promise<ProjectWithOwner> => {
+        const { data } = await api.patch<ProjectWithOwner>(`/projects/${id}`, updates);
+        return data;
+    },
+
     archiveProject: async (id: string): Promise<ProjectWithOwner> => {
         const { data } = await api.patch<ProjectWithOwner>(`/projects/${id}/archive`);
         return data;

@@ -15,7 +15,7 @@ export class DailyCheckIn {
     userId: string;
 
     @Column({ name: 'project_id', nullable: true })
-    projectId: string;
+    projectId: string | null;
 
     @Column({ type: 'date', default: () => 'CURRENT_DATE' })
     date: string;
@@ -26,15 +26,20 @@ export class DailyCheckIn {
     @Column({ default: 'office' })
     location: string;
 
-    @Column({ length: 120 })
-
-    intent: string;
+    @Column({ type: 'varchar', name: 'intent', length: 120, nullable: true })
+    intent: string | null;
 
     @Column({ name: 'is_blocked', default: false })
     isBlocked: boolean;
 
-    @Column({ name: 'block_reason', nullable: true })
-    blockReason: string;
+    @Column({ type: 'varchar', name: 'block_reason_category', nullable: true })
+    blockReasonCategory: string | null;
+
+    @Column({ type: 'varchar', name: 'block_reason_text', length: 120, nullable: true })
+    blockReasonText: string | null;
+
+    @Column({ type: 'uuid', name: 'helper_user_id', nullable: true })
+    helperUserId: string | null;
 
     @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;

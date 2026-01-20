@@ -14,7 +14,10 @@ export interface CheckIn {
     projectName?: string;
     intent: string;
     isBlocked: boolean;
-    blockReason?: string;
+    blockReason?: string; // Legacy/Compat
+    blockReasonText?: string;
+    blockReasonCategory?: string;
+    helperUserId?: string;
 }
 
 export interface DashboardData {

@@ -1,0 +1,13 @@
+{
+  "message": "column DailyCheckIn.block_reason_category does not exist",
+  "stack": "QueryFailedError: column DailyCheckIn.block_reason_category does not exist\n    at PostgresQueryRunner.query (C:\\Users\\vimal\\.gemini\\antigravity\\scratch\\project-visibility-system\\backend\\node_modules\\typeorm\\driver\\src\\driver\\postgres\\PostgresQueryRunner.ts:325:19)\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at async SelectQueryBuilder.loadRawResults (C:\\Users\\vimal\\.gemini\\antigravity\\scratch\\project-visibility-system\\backend\\node_modules\\typeorm\\query-builder\\src\\query-builder\\SelectQueryBuilder.ts:3868:25)\n    at async SelectQueryBuilder.executeEntitiesAndRawResults (C:\\Users\\vimal\\.gemini\\antigravity\\scratch\\project-visibility-system\\backend\\node_modules\\typeorm\\query-builder\\src\\query-builder\\SelectQueryBuilder.ts:3614:26)\n    at async SelectQueryBuilder.getRawAndEntities (C:\\Users\\vimal\\.gemini\\antigravity\\scratch\\project-visibility-system\\backend\\node_modules\\typeorm\\query-builder\\src\\query-builder\\SelectQueryBuilder.ts:1671:29)\n    at async SelectQueryBuilder.getOne (C:\\Users\\vimal\\.gemini\\antigravity\\scratch\\project-visibility-system\\backend\\node_modules\\typeorm\\query-builder\\src\\query-builder\\SelectQueryBuilder.ts:1698:25)\n    at async PresenceService.createCheckIn (C:\\Users\\vimal\\.gemini\\antigravity\\scratch\\project-visibility-system\\backend\\src\\modules\\presence\\presence.service.ts:45:30)",
+  "code": "42703",
+  "dto": {
+    "status": "in_office",
+    "projectId": "a4a70b6c-2453-4d52-8b9b-10e24b9ab065",
+    "intent": "Build n8n automation",
+    "isBlocked": false
+  },
+  "userId": "fd5fd9d0-f85f-4861-a8ca-d25d0e3e80df",
+  "tenantId": "00000000-0000-0000-0000-000000000001"
+}

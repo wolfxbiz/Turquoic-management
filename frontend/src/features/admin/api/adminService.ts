@@ -35,6 +35,11 @@ export const adminService = {
         return data;
     },
 
+    updateTeam: async (id: string, name: string, description?: string): Promise<any> => {
+        const { data } = await api.patch(`/teams/${id}`, { name, description });
+        return data;
+    },
+
     deactivateUser: async (userId: string): Promise<void> => {
         await api.delete(`/users/${userId}`);
     },

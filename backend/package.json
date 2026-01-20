@@ -22,7 +22,7 @@
     "setup-db": "ts-node src/setup-cloud-db.ts"
   },
   "dependencies": {
-    "@nestjs/common": "^11.0.1",
+    "@nestjs/common": "^11.1.12",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.2",
@@ -36,6 +36,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.3",
     "cookie-parser": "^1.4.7",
+    "fs": "^0.0.1-security",
     "helmet": "^8.1.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",

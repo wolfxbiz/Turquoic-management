@@ -16,6 +16,7 @@ import { PresenceModule } from './modules/presence/presence.module';
 import { ProjectsModule } from './modules/projects/projects.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { TeamsModule } from './modules/teams/teams.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 
 // Common
@@ -38,7 +39,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
         password: config.get('DATABASE_PASSWORD'),
         database: config.get('DATABASE_NAME'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false,
+        synchronize: false, // Disabled for faster startup
         logging: config.get('NODE_ENV') === 'development',
         ssl: config.get('DATABASE_SSL') === 'true' ? { rejectUnauthorized: false } : false,
       }),
@@ -53,6 +54,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
     ProjectsModule,
     DashboardModule,
     TeamsModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [

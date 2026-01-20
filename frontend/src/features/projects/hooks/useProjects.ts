@@ -14,6 +14,15 @@ export const useProjects = () => {
         mutationFn: (projectData: CreateProjectDTO) => projectsService.createProject(projectData),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['projects'] });
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
+        },
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: ({ id, updates }: { id: string; updates: Partial<CreateProjectDTO> }) =>
+            projectsService.updateProject(id, updates),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['projects'] });
         },
     });
 
@@ -31,6 +40,8 @@ export const useProjects = () => {
         error: projectsQuery.error,
         createProject: createMutation.mutateAsync,
         isCreating: createMutation.isPending,
+        updateProject: updateMutation.mutateAsync,
+        isUpdating: updateMutation.isPending,
         archiveProject: archiveMutation.mutateAsync,
         isArchiving: archiveMutation.isPending,
     };

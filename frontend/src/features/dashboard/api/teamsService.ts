@@ -1,9 +1,12 @@
 import api from '../../../lib/api';
 
+import { User } from '../../../types';
+
 export interface Team {
     id: string;
     name: string;
     description?: string;
+    members: User[];
 }
 
 export const teamsService = {

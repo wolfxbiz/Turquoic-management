@@ -77,31 +77,42 @@ export const EmployeeDashboard: React.FC = () => {
                             <div className="grid gap-4">
                                 {activeBlockers.map((blocker) => (
                                     <div key={blocker.id} className="flex items-start justify-between bg-gray-50 p-4 rounded-xl border border-gray-100">
-                                        <div className="flex gap-4">
+                                        <div className="flex gap-4 w-full">
                                             <div className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-sm font-bold text-gray-600 shadow-sm shrink-0">
                                                 {blocker.userName?.charAt(0) || '?'}
                                             </div>
-                                            <div>
-                                                <div className="flex items-center gap-2 mb-1">
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-1 flex-wrap">
                                                     <span className="font-bold text-gray-900 text-sm">{blocker.userName || 'Unknown'}</span>
                                                     <span className="text-gray-400 text-xs">•</span>
-                                                    <span className="text-xs font-medium text-turquoic-700 bg-turquoic-50 px-2 py-0.5 rounded-md border border-turquoic-100">
+                                                    <span className="text-xs font-medium text-turquoic-700 bg-turquoic-50 px-2 py-0.5 rounded-md border border-turquoic-100 truncate max-w-[150px]">
                                                         {blocker.projectName || 'Unassigned'}
                                                     </span>
+                                                    {blocker.blockReasonCategory && (
+                                                        <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-md border border-red-100">
+                                                            {blocker.blockReasonCategory}
+                                                        </span>
+                                                    )}
                                                 </div>
-                                                <p className="text-gray-600 text-sm leading-relaxed">{blocker.blockReason}</p>
+                                                <p className="text-gray-600 text-sm leading-relaxed mb-1">
+                                                    <span className="font-semibold text-gray-500 text-xs uppercase tracking-wide mr-1">Intent:</span>
+                                                    {blocker.intent}
+                                                </p>
+                                                {blocker.blockReasonText && (
+                                                    <p className="text-red-500 text-sm leading-relaxed bg-red-50/50 p-2 rounded-lg border border-red-100/50">
+                                                        <span className="font-bold text-red-600/80 mr-1">Blocker:</span>
+                                                        {blocker.blockReasonText}
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-1.5 text-gray-400 text-xs font-medium bg-white px-2 py-1 rounded-md border border-gray-100 whitespace-nowrap">
-                                            <Clock className="w-3.5 h-3.5" />
-                                            <span>Today</span>
-                                        </div>
+                                        {/* Removed Time/Duration display as per requirements */}
                                     </div>
                                 ))}
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center h-48 bg-gray-50 rounded-xl border border-gray-100 border-dashed">
-                                <p className="text-gray-400 font-medium">No active blockers reported today</p>
+                                <p className="text-gray-400 font-medium">No active blockers reported</p>
                             </div>
                         )}
                     </div>
@@ -140,6 +151,10 @@ export const EmployeeDashboard: React.FC = () => {
             <div className="border-t border-gray-100 pt-8 mt-12 text-center">
                 <p className="text-gray-400 text-sm max-w-lg mx-auto leading-relaxed">
                     This system exists to surface problems early, not to monitor people.
+                    <br />
+                    <a href="/policy" className="text-turquoic-600 hover:text-turquoic-700 underline decoration-turquoic-200 underline-offset-2 transition-colors">
+                        Read: What This System Is Not
+                    </a>
                 </p>
             </div>
 

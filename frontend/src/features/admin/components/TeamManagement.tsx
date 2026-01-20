@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 
 export const TeamManagement: React.FC = () => {
     const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [editingTeam, setEditingTeam] = useState<Team | null>(null);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const queryClient = useQueryClient();
@@ -22,18 +23,53 @@ export const TeamManagement: React.FC = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['teams'] });
             toast.success('Team created successfully');
-            setIsCreateOpen(false);
-            setName('');
-            setDescription('');
+            closeModal();
         },
         onError: (err: any) => {
             toast.error(err.response?.data?.message || 'Failed to create team');
         }
     });
 
-    const handleCreate = (e: React.FormEvent) => {
+    const updateMutation = useMutation({
+        mutationFn: () => adminService.updateTeam(editingTeam!.id, name, description),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['teams'] });
+            toast.success('Team updated successfully');
+            closeModal();
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.message || 'Failed to update team');
+        }
+    });
+
+    const openCreateModal = () => {
+        setEditingTeam(null);
+        setName('');
+        setDescription('');
+        setIsCreateOpen(true);
+    };
+
+    const openEditModal = (team: Team) => {
+        setEditingTeam(team);
+        setName(team.name);
+        setDescription(team.description || '');
+        setIsCreateOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsCreateOpen(false);
+        setEditingTeam(null);
+        setName('');
+        setDescription('');
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        createMutation.mutate();
+        if (editingTeam) {
+            updateMutation.mutate();
+        } else {
+            createMutation.mutate();
+        }
     };
 
     return (
@@ -51,7 +87,7 @@ export const TeamManagement: React.FC = () => {
                 </div>
 
                 <button
-                    onClick={() => setIsCreateOpen(true)}
+                    onClick={openCreateModal}
                     className="flex items-center gap-3 px-6 py-4 bg-gray-900 text-white rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-gray-200 hover:bg-black transition-all active:scale-95"
                 >
                     <Plus className="w-5 h-5" />
@@ -76,7 +112,10 @@ export const TeamManagement: React.FC = () => {
                                     <Users className="w-6 h-6 text-turquoic-600 group-hover:text-white" />
                                 </div>
                                 <div className="flex gap-1">
-                                    <button className="p-2 text-gray-300 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all">
+                                    <button
+                                        onClick={() => openEditModal(team)}
+                                        className="p-2 text-gray-300 hover:text-gray-600 hover:bg-gray-50 rounded-lg transition-all"
+                                    >
                                         <Edit3 className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -93,13 +132,39 @@ export const TeamManagement: React.FC = () => {
                         <div className="mt-8 pt-6 border-t border-gray-50 flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <div className="flex -space-x-3">
-                                    {/* Mock avatars for members */}
-                                    <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400">?</div>
-                                    <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-200" />
+                                    {team.members && team.members.length > 0 ? (
+                                        team.members.slice(0, 4).map((member) => (
+                                            <div
+                                                key={member.id}
+                                                className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center overflow-hidden"
+                                                title={member.fullName}
+                                            >
+                                                {member.avatarUrl ? (
+                                                    <img
+                                                        src={member.avatarUrl}
+                                                        alt={member.fullName}
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <span className="text-[10px] font-black text-gray-400">
+                                                        {member.fullName.charAt(0).toUpperCase()}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-50 flex items-center justify-center text-[10px] font-black text-gray-300">
+                                            0
+                                        </div>
+                                    )}
+                                    {team.members && team.members.length > 4 && (
+                                        <div className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-500">
+                                            +{team.members.length - 4}
+                                        </div>
+                                    )}
                                 </div>
                                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">
-                                    {/* Team interface doesn't have members count yet, we should add it on backend or handle it */}
-                                    Active Members
+                                    {team.members ? team.members.length : 0} Active Members
                                 </span>
                             </div>
                             <button className="text-[10px] font-black text-turquoic-600 uppercase tracking-widest hover:underline px-2">
@@ -124,14 +189,16 @@ export const TeamManagement: React.FC = () => {
                                     <div className="bg-gray-800 p-2.5 rounded-2xl">
                                         <Plus className="w-5 h-5 text-white" />
                                     </div>
-                                    <h2 className="text-xl font-black text-gray-800 tracking-tight">Construct Team</h2>
+                                    <h2 className="text-xl font-black text-gray-800 tracking-tight">
+                                        {editingTeam ? 'Edit Team' : 'Construct Team'}
+                                    </h2>
                                 </div>
-                                <button onClick={() => setIsCreateOpen(false)} className="text-gray-400 hover:text-gray-600">
+                                <button onClick={closeModal} className="text-gray-400 hover:text-gray-600">
                                     <X className="w-5 h-5" />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleCreate} className="p-8 space-y-6">
+                            <form onSubmit={handleSubmit} className="p-8 space-y-6">
                                 <div>
                                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Team Identity</label>
                                     <input
@@ -156,10 +223,12 @@ export const TeamManagement: React.FC = () => {
 
                                 <button
                                     type="submit"
-                                    disabled={createMutation.isPending}
+                                    disabled={createMutation.isPending || updateMutation.isPending}
                                     className="w-full py-5 bg-gray-900 hover:bg-black text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-gray-200 transition-all active:scale-95 disabled:opacity-50"
                                 >
-                                    {createMutation.isPending ? 'Constructing...' : 'Deploy Team'}
+                                    {createMutation.isPending || updateMutation.isPending
+                                        ? 'Saving...'
+                                        : (editingTeam ? 'Update Team' : 'Deploy Team')}
                                 </button>
                             </form>
                         </motion.div>

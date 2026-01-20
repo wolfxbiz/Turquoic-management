@@ -11,6 +11,7 @@ import { CheckInForm } from './features/check-in';
 import { ProjectsList } from './features/projects';
 import { AdminManagement } from './features/admin/components/AdminManagement';
 import { DesignSystemPage } from './features/design-system/DesignSystemPage';
+import { WhatThisSystemIsNot } from './features/design-system/WhatThisSystemIsNot';
 
 
 const queryClient = new QueryClient({
@@ -76,7 +77,18 @@ function App() {
                     />
 
 
+
                     <Route path="/design-system" element={<DesignSystemPage />} />
+                    <Route
+                        path="/policy"
+                        element={
+                            <ProtectedRoute>
+                                <Layout>
+                                    <WhatThisSystemIsNot />
+                                </Layout>
+                            </ProtectedRoute>
+                        }
+                    />
 
                     {/* Root Redirect */}
                     <Route path="/" element={<Navigate to="/dashboard" replace />} />
