@@ -5,8 +5,8 @@ import { CheckInStatus } from '../types';
 interface CheckInCardProps {
     userName: string;
     status: CheckInStatus;
-    projectName: string;
-    intent: string;
+    projectName?: string;
+    intent?: string;
     isBlocked: boolean;
     blockReason?: string;
 }
@@ -59,7 +59,7 @@ export const CheckInCard: React.FC<CheckInCardProps> = ({
                                     {statusLabels[status]}
                                 </span>
                                 <span className="text-[10px] font-bold text-turquoic-600 bg-turquoic-50 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                    {projectName}
+                                    {projectName || 'General'}
                                 </span>
                             </div>
                         </div>
@@ -67,7 +67,7 @@ export const CheckInCard: React.FC<CheckInCardProps> = ({
 
                     <div className="flex-1 md:mx-8">
                         <p className={`text-sm text-gray-600 ${isExpanded ? '' : 'line-clamp-1'}`}>
-                            {intent}
+                            {intent || 'No intent shared'}
                         </p>
                     </div>
 

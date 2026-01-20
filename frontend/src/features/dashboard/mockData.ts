@@ -2,7 +2,7 @@ import { DashboardData } from './types';
 
 export const mockDashboardData: DashboardData = {
     summary: { inOffice: 8, remote: 5, onLeave: 2, blocked: 3 },
-    checkIns: [
+    presenceList: [
         {
             id: '1',
             userId: 'u1',

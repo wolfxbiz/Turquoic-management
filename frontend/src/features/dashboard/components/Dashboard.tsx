@@ -7,6 +7,7 @@ import { BlockersPanel } from './BlockersPanel';
 import { BlockerHeatmap } from './BlockerHeatmap';
 import { TeamFilter } from './TeamFilter';
 import { useDashboard } from '../hooks/useDashboard';
+import { CheckIn } from '../types';
 
 
 import { useQueryClient } from '@tanstack/react-query';
@@ -53,7 +54,7 @@ export const Dashboard: React.FC = () => {
     }
 
     const summary = data?.summary;
-    const presenceList = data?.checkIns || [];
+    const presenceList = data?.presenceList || [];
     const blockers = presenceList.filter((c) => c.isBlocked);
 
 
@@ -120,7 +121,7 @@ export const Dashboard: React.FC = () => {
 
                         <div className="grid grid-cols-1 gap-4">
                             {presenceList.length > 0 ? (
-                                presenceList.map((checkIn: any) => (
+                                presenceList.map((checkIn: CheckIn) => (
                                     <CheckInCard
                                         key={checkIn.id}
                                         userName={checkIn.userName}
