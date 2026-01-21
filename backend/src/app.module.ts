@@ -45,11 +45,15 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
             : false,
         };
 
-        if (url) {
+        if (url && url.startsWith('postgres')) {
+          console.log(`🔌 Connecting to database via URL (length: ${url.length})`);
           options.url = url;
         } else {
-          options.host = config.get<string>('DATABASE_HOST');
-          options.port = config.get<number>('DATABASE_PORT', 5432);
+          const host = config.get<string>('DATABASE_HOST');
+          const port = config.get<number>('DATABASE_PORT', 5432);
+          console.log(`🔌 Connecting to database: ${host}:${port}`);
+          options.host = host;
+          options.port = port;
           options.username = config.get<string>('DATABASE_USER');
           options.password = config.get<string>('DATABASE_PASSWORD');
           options.database = config.get<string>('DATABASE_NAME');
