@@ -3,6 +3,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
+import { DataSource } from 'typeorm';
 import { IamService } from '../../iam/iam.service';
 
 @Injectable()
@@ -10,6 +11,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(
         private configService: ConfigService,
         private iamService: IamService,
+        private dataSource: DataSource,
     ) {
         const secret = configService.get<string>('JWT_SECRET');
         if (!secret) {
@@ -30,6 +32,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: any) {
+        // Set context for RLS before lookup
+        await this.dataSource.query(`SET app.current_tenant = '${payload.tenantId}'`);
+
         const user = await this.iamService.findById(payload.sub);
         if (!user || !user.isActive) {
             throw new UnauthorizedException();

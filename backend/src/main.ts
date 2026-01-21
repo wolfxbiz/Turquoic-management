@@ -21,9 +21,12 @@ async function bootstrap() {
   );
 
   // Enable CORS
+  const frontendUrl = process.env.FRONTEND_URL || true;
   app.enableCors({
-    origin: true, // In production, specify the origin
+    origin: frontendUrl,
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type,Accept,Authorization',
   });
 
   const port = process.env.PORT || 3000;
