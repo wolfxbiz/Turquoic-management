@@ -35,22 +35,27 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
         const url = config.get<string>('DATABASE_URL');
         const isProduction = config.get('NODE_ENV') === 'production';
 
-        return {
+        const options: any = {
           type: 'postgres',
-          ...(url ? { url } : {
-            host: config.get('DATABASE_HOST'),
-            port: config.get<number>('DATABASE_PORT'),
-            username: config.get('DATABASE_USER'),
-            password: config.get('DATABASE_PASSWORD'),
-            database: config.get('DATABASE_NAME'),
-          }),
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: false, // Security: Disabled in NestJS for better control
-          logging: config.get('NODE_ENV') === 'development',
+          synchronize: false,
+          logging: !isProduction,
           ssl: url || config.get('DATABASE_SSL') === 'true'
             ? { rejectUnauthorized: false }
             : false,
         };
+
+        if (url) {
+          options.url = url;
+        } else {
+          options.host = config.get<string>('DATABASE_HOST');
+          options.port = config.get<number>('DATABASE_PORT', 5432);
+          options.username = config.get<string>('DATABASE_USER');
+          options.password = config.get<string>('DATABASE_PASSWORD');
+          options.database = config.get<string>('DATABASE_NAME');
+        }
+
+        return options;
       },
     }),
     ThrottlerModule.forRoot([{
