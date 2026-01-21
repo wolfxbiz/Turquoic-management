@@ -28,6 +28,8 @@ CREATE TABLE users (
     full_name TEXT NOT NULL,
     is_admin BOOLEAN NOT NULL DEFAULT false,
     is_active BOOLEAN NOT NULL DEFAULT true,
+    job_title TEXT,
+    avatar_url TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE(tenant_id, email)
 );
@@ -41,6 +43,8 @@ CREATE TABLE projects (
     description TEXT,
     owner_id UUID NOT NULL REFERENCES users(id),
     status TEXT NOT NULL DEFAULT 'active',
+    direction TEXT,
+    progress INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -52,9 +56,14 @@ CREATE TABLE daily_check_ins (
     project_id UUID REFERENCES projects(id) ON DELETE SET NULL,
     date DATE NOT NULL DEFAULT CURRENT_DATE,
     status TEXT NOT NULL DEFAULT 'pending',
+    location TEXT NOT NULL DEFAULT 'office',
     intent VARCHAR(120),
     is_blocked BOOLEAN NOT NULL DEFAULT false,
-    block_reason TEXT,
+    block_reason_category TEXT,
+    block_reason_text TEXT,
+    helper_user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    checked_in_at TIMESTAMPTZ,
+    checked_out_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     UNIQUE(user_id, date)
 );
