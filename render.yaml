@@ -1,0 +1,35 @@
+services:
+  # Backend Service (NestJS)
+  - type: web
+    name: turquoic-api
+    runtime: node
+    plan: free # Change to starter if you need more power
+    buildCommand: cd backend && npm install && npm run build
+    startCommand: cd backend && npm run start:prod
+    envVars:
+      - key: DATABASE_URL
+        sync: false # Set this value in Render Dashboard
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_SSL
+        value: "true"
+
+  # Frontend Service (Vite/React)
+  - type: web # Using 'web' with static hosting config for SPA routing support in Blueprint
+    name: turquoic-web
+    runtime: static
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    publishDir: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: turquoic-api
+          property: host
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
