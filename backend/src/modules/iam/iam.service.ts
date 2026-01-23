@@ -23,7 +23,10 @@ export class IamService {
     }
 
     async findById(id: string): Promise<User | null> {
-        return this.userRepository.findOne({ where: { id } });
+        return this.userRepository.findOne({
+            where: { id },
+            relations: ['team']
+        });
     }
 
     async validateUser(email: string, password: string): Promise<User | null> {

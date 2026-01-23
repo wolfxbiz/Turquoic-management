@@ -14,10 +14,14 @@ import { LoginDto } from './dto/login.dto';
 import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import type { CurrentUserDto } from '../../common/decorators/current-user.decorator';
+import { IamService } from '../iam/iam.service';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService) { }
+    constructor(
+        private authService: AuthService,
+        private iamService: IamService,
+    ) { }
 
     @Public()
     @HttpCode(HttpStatus.OK)
@@ -68,7 +72,22 @@ export class AuthController {
     }
 
     @Get('me')
-    getMe(@CurrentUser() user: CurrentUserDto) {
-        return user;
+    async getMe(@CurrentUser() user: CurrentUserDto) {
+        // Fetch full user details from database including fullName, team, etc.
+        const fullUser = await this.iamService.findById(user.userId);
+        if (!fullUser) {
+            throw new UnauthorizedException('User not found');
+        }
+
+        return {
+            id: fullUser.id,
+            email: fullUser.email,
+            fullName: fullUser.fullName,
+            isAdmin: fullUser.isAdmin,
+            tenantId: fullUser.tenantId,
+            team: fullUser.team ? { id: fullUser.team.id, name: fullUser.team.name } : null,
+            jobTitle: fullUser.jobTitle,
+            avatarUrl: fullUser.avatarUrl,
+        };
     }
 }
